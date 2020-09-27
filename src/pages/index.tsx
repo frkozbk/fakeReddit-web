@@ -1,11 +1,16 @@
+import { Flex } from "@chakra-ui/core";
 import { Container } from "../components/Container";
 
-import { DarkModeSwitch } from "../components/DarkModeSwitch";
+import Header from "../components/Header";
+import Post from "../components/Post";
 
 const Index = () => (
-	<Container>
-		<DarkModeSwitch />
-	</Container>
+    <>
+        <Header />
+        <Container>
+            <Post />
+        </Container>
+    </>
 );
 
 export default Index;

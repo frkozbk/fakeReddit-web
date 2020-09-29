@@ -1,8 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
 import NextLink from "next/link";
 import { Button, Flex } from "@chakra-ui/core";
-import { DarkModeSwitch } from "../components/DarkModeSwitch";
+import { isServer } from "../utils/isServer";
+import { useLogoutMutation, useMeQuery } from "../generated/graphql";
 const Header = () => {
+    const [{ fetching: logoutFetching }, logout] = useLogoutMutation();
+    const [{ data, fetching }] = useMeQuery({
+        pause: isServer(),
+    });
+    useEffect(() => {
+        console.log(data?.me);
+    });
     return (
         <Flex
             as="nav"
@@ -13,15 +21,22 @@ const Header = () => {
             bg="blue.900"
             color="white"
         >
-            <NextLink href="/login">
-                <Button variantColor="white" mr="6" variant="link">
-                    Login
+            {data?.me ? (
+                <Button
+                    as="a"
+                    variantColor="white"
+                    variant="link"
+                    onClick={() => logout()}
+                >
+                    Logout
                 </Button>
-            </NextLink>
-
-            <Button variantColor="white" variant="link">
-                Logout
-            </Button>
+            ) : (
+                <NextLink href="/login">
+                    <Button as="a" variantColor="white" mr="6" variant="link">
+                        Login
+                    </Button>
+                </NextLink>
+            )}
         </Flex>
     );
 };

@@ -16,7 +16,7 @@ interface Inputs {
     password: string;
 }
 
-const Register = () => {
+const Login = () => {
     const router = useRouter();
     const [{ fetching }, loginMutation] = useLoginMutation();
     const { register, handleSubmit, setError, errors } = useForm<Inputs>();
@@ -51,6 +51,7 @@ const Register = () => {
                         type="text"
                         id="usernameOrEmail"
                         name="usernameOrEmail"
+                        defaultValue="frk_ozbk"
                         aria-describedby="usernameOrEmail-helper-text"
                         ref={register({ required: true })}
                     />
@@ -64,6 +65,7 @@ const Register = () => {
                         type="password"
                         id="password"
                         name="password"
+                        defaultValue="123qwe"
                         aria-describedby="password-helper-text"
                         ref={register({ required: true })}
                     />
@@ -87,4 +89,4 @@ const Register = () => {
     );
 };
 
-export default Register;
+export default Login;

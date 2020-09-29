@@ -1,31 +1,23 @@
 import React from "react";
-import { Box } from "@chakra-ui/core";
 import ChevronUp from "./Icons/ChevronUp";
 import ChevronDown from "./Icons/ChevronDown";
-const Post = () => {
+import { post } from "../pages";
+const Post = (props: post) => {
+    const { content, createdAt, id, title, updatedAt, voteCount } = props;
     return (
-        <div className="mr-1">
-            <div className="post-vote">
-                <button className="post-vote__up voteBtn">
+        <div className="post flex flex-col lg:flex-row lg:max-w-full mx-auto p-2 border-2 border-gray-400 rounded-md mb-5">
+            <div className="post-vote order-2 flex lg:order-none lg:flex-col lg:w-12 lg:items-center">
+                <button className="post-vote__up w-6">
                     <ChevronUp />
                 </button>
-                <button className="post-vote__down voteBtn">
+                <p>{voteCount}</p>
+                <button className="post-vote__down w-6">
                     <ChevronDown />
                 </button>
             </div>
             <div className="post-content">
-                <p className="title">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Magnam vitae repudiandae enim aliquam fugiat accusamus
-                    sequi, rem maxime corporis numquam a modi magni earum neque
-                    placeat, quasi saepe, deleniti quo?
-                </p>
-                <p className="">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Dolor quas dolorum neque doloribus in? Aperiam placeat,
-                    sunt, repellat facilis distinctio id quia provident, unde
-                    mollitia expedita ipsa. Dicta, quos atque!
-                </p>
+                <p className="title text-gray-900 font-semibold">{title}</p>
+                <p className="content">{content}</p>
             </div>
         </div>
     );

@@ -12,7 +12,7 @@ const ChevronUp = () => {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth={2}
-                d="M5 15l7-7 7 7"
+                d="M8 7l4-4m0 0l4 4m-4-4v18"
             />
         </svg>
     );

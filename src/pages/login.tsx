@@ -11,6 +11,8 @@ import { DarkModeSwitch } from "../components/DarkModeSwitch";
 import { useRouter } from "next/router";
 import { useLoginMutation } from "../generated/graphql";
 import { useForm } from "react-hook-form";
+
+import { withoutAuth } from "../Hocs/withAuth";
 interface Inputs {
     usernameOrEmail: string;
     password: string;
@@ -18,10 +20,10 @@ interface Inputs {
 
 const Login = () => {
     const router = useRouter();
-    const [{ fetching }, loginMutation] = useLoginMutation();
+    const [loginMutation, { loading, data }] = useLoginMutation();
     const { register, handleSubmit, setError, errors } = useForm<Inputs>();
     const onSubmit = async (loginData: Inputs) => {
-        const { data } = await loginMutation({ ...loginData });
+        const { data } = await loginMutation({ variables: loginData });
         if (data?.login.user) {
             router.push("/");
             return;
@@ -75,7 +77,7 @@ const Login = () => {
                 </FormControl>
                 <Button
                     type="submit"
-                    isLoading={fetching}
+                    isLoading={loading}
                     loadingText="Submitting"
                     variantColor="teal"
                     variant="solid"
@@ -89,4 +91,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default withoutAuth(Login);

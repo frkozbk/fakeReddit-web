@@ -1,24 +1,52 @@
 import { Button, Flex } from "@chakra-ui/core";
 import Link from "next/link";
-import { useEffect } from "react";
-import { UseQueryResponse } from "urql";
+import { useEffect, useState } from "react";
 import Header from "../components/Header";
 import Post from "../components/Post";
-import { PostsQuery, usePostsQuery } from "../generated/graphql";
+import {
+    Post as PostType,
+    PostsDocument,
+    PostsQuery,
+    usePostsQuery,
+    useVoteMutation,
+} from "../generated/graphql";
+import { useAuth } from "../Hocs/withAuth";
+import withApollo from "../utils/withApolloClient";
 type PropType = {
-    posts: post[];
-};
-
-export type post = {
-    id: number;
-    createdAt: string;
-    updatedAt: string;
-    title: string;
-    content: string;
-    voteCount: number;
+    posts: PostsQuery[];
 };
 const Index = (props: PropType) => {
-    const [{ fetching, data }, reFetchPost] = usePostsQuery();
+    const { user } = useAuth();
+    const [voteMutation] = useVoteMutation();
+    const { data, fetchMore, loading } = usePostsQuery();
+    const handleVote = (newVoteStatus: number, postId: number): void => {
+        voteMutation({
+            variables: { postId, voteStatus: newVoteStatus },
+            update: (cache) => {
+                const { posts: oldPosts }: any = cache.readQuery({
+                    query: PostsDocument,
+                });
+                const newPosts = oldPosts.map((post: PostType) => {
+                    if (post.id === postId) {
+                        return {
+                            ...post,
+                            voteStatus: newVoteStatus,
+                            voteCount: post.voteStatus
+                                ? post.voteCount + 2 * newVoteStatus
+                                : post.voteCount + newVoteStatus,
+                        };
+                    }
+                    return post;
+                });
+                cache.writeQuery({
+                    query: PostsDocument,
+                    data: {
+                        posts: newPosts,
+                    },
+                });
+            },
+        });
+    };
     return (
         <>
             <Header />
@@ -29,7 +57,7 @@ const Index = (props: PropType) => {
                     </Link>
                 </Flex>
                 {data?.posts.map((post) => (
-                    <Post {...post} />
+                    <Post {...post} key={post.id} handleVoteFn={handleVote} />
                 ))}
             </main>
         </>

@@ -1,0 +1,3 @@
+mutation Vote($voteStatus: Float!, $postId: Float!) {
+    vote(voteStatus: $voteStatus, postId: $postId)
+}

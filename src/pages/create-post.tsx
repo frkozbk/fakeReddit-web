@@ -9,19 +9,55 @@ import {
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { LoginMutation, useCreatePostMutation } from "../generated/graphql";
+import {
+    CreatePostDocument,
+    LoginMutation,
+    PostsDocument,
+    useCreatePostMutation,
+} from "../generated/graphql";
+import {
+    useAuth,
+    withAuth,
+    withAuthRedirect,
+    withoutAuth,
+} from "../Hocs/withAuth";
 
 type Inputs = {
     title: string;
     content: string;
 };
 
-const createPost = () => {
+const CreatePost: React.FC = () => {
     const router = useRouter();
     const { register, handleSubmit, errors } = useForm<Inputs>();
-    const [{ fetching }, loginMutation] = useCreatePostMutation();
-    const onSubmit = async (args: Inputs) => {
-        await loginMutation(args);
+    const [loginMutation, { loading }] = useCreatePostMutation();
+    const onSubmit = (args: Inputs) => {
+        loginMutation({
+            variables: { ...args },
+            optimisticResponse: {
+                __typename: "Mutation",
+                createPost: {
+                    __typename: "Post",
+                    content: args.content,
+                    title: args.title,
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString(),
+                    id: Math.random() * 999999999,
+                    voteCount: 5,
+                },
+            },
+            // update: (cache, { data: post }) => {
+            //     const data = cache.readQuery({ query: PostsDocument });
+            //     cache.writeQuery({
+            //         query: PostsDocument,
+            //         data: {
+            //             ...data,
+            //             posts: [post, ...data.posts],
+            //         },
+            //     });
+            // },
+        });
+        router.push("/");
     };
 
     return (
@@ -66,7 +102,6 @@ const createPost = () => {
             </FormControl>
             <Button
                 type="submit"
-                isLoading={fetching}
                 loadingText="Submitting"
                 variantColor="teal"
                 variant="solid"
@@ -80,4 +115,4 @@ const createPost = () => {
     );
 };
 
-export default createPost;
+export default withAuth(CreatePost);

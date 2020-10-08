@@ -6,5 +6,6 @@ query Posts {
         title
         content
         voteCount
+        voteStatus
     }
 }

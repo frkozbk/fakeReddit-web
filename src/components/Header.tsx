@@ -1,43 +1,36 @@
 import React, { useEffect } from "react";
 import NextLink from "next/link";
-import { Button, Flex } from "@chakra-ui/core";
 import { isServer } from "../utils/isServer";
 import { useLogoutMutation, useMeQuery } from "../generated/graphql";
+import { useAuth } from "../Hocs/withAuth";
+
 const Header = () => {
-    const [{ fetching: logoutFetching }, logout] = useLogoutMutation();
-    const [{ data, fetching }] = useMeQuery({
-        pause: isServer(),
-    });
+    const { user } = useAuth();
     useEffect(() => {
-        console.log(data?.me);
+        console.log(user);
     });
     return (
-        <Flex
-            as="nav"
-            align="center"
-            justify="flex-end"
-            wrap="wrap"
-            padding="1.9rem"
-            bg="blue.900"
-            color="white"
-        >
-            {data?.me ? (
-                <Button
-                    as="a"
-                    variantColor="white"
-                    variant="link"
-                    onClick={() => logout()}
-                >
-                    Logout
-                </Button>
-            ) : (
-                <NextLink href="/login">
-                    <Button as="a" variantColor="white" mr="6" variant="link">
-                        Login
-                    </Button>
-                </NextLink>
-            )}
-        </Flex>
+        <nav className="flex items-center justify-between h-16 px-5 xl:px-64 bg-gradient-to-r to-blue-500 from-green-500">
+            <h4 className="text-2xl text-white">FakeReddit</h4>
+            <div className="flex items-center">
+                {user ? (
+                    <p className="text-white mr-2">{user.username}</p>
+                ) : (
+                    <></>
+                )}
+                {user ? (
+                    <>
+                        <button className="text-white" onClick={() => {}}>
+                            Logout
+                        </button>
+                    </>
+                ) : (
+                    <NextLink href="/login">
+                        <a className="text-white">Login</a>
+                    </NextLink>
+                )}
+            </div>
+        </nav>
     );
 };
 
